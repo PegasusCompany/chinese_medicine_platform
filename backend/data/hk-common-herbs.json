@@ -1,0 +1,460 @@
+{
+  "source": "Hong Kong Common Chinese Medicinal Materials",
+  "description": "Commonly used Chinese herbs in Hong Kong TCM practice",
+  "last_updated": "2024-12-28",
+  "total_herbs": 50,
+  "herbs": [
+    {
+      "name": "Ginseng",
+      "chinese_name": "人參",
+      "description": "Tonifies qi, strengthens spleen and lung, calms spirit",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, slightly bitter, slightly warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Astragalus Root",
+      "chinese_name": "黃芪",
+      "description": "Tonifies qi, consolidates exterior, promotes urination",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, slightly warm",
+      "dosage_range": "9-30g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Angelica Root",
+      "chinese_name": "當歸",
+      "description": "Tonifies blood, regulates menstruation, moistens intestines",
+      "category": "Blood Tonifying",
+      "properties": "Sweet, acrid, warm",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Rehmannia Root",
+      "chinese_name": "熟地黃",
+      "description": "Tonifies blood and yin, nourishes kidney essence",
+      "category": "Blood Tonifying",
+      "properties": "Sweet, slightly warm",
+      "dosage_range": "9-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Licorice Root",
+      "chinese_name": "甘草",
+      "description": "Tonifies spleen qi, clears heat, harmonizes other herbs",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, neutral",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Goji Berry",
+      "chinese_name": "枸杞子",
+      "description": "Nourishes liver and kidney yin, brightens eyes",
+      "category": "Yin Tonifying",
+      "properties": "Sweet, neutral",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Schisandra Berry",
+      "chinese_name": "五味子",
+      "description": "Astringes lung qi, tonifies kidney, calms spirit",
+      "category": "Astringent",
+      "properties": "Sour, sweet, warm",
+      "dosage_range": "3-6g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Chrysanthemum Flower",
+      "chinese_name": "菊花",
+      "description": "Disperses wind-heat, clears liver heat, brightens eyes",
+      "category": "Heat Clearing",
+      "properties": "Sweet, bitter, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Honeysuckle Flower",
+      "chinese_name": "金銀花",
+      "description": "Clears heat, detoxifies, disperses wind-heat",
+      "category": "Heat Clearing",
+      "properties": "Sweet, cold",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Scutellaria Root",
+      "chinese_name": "黃芩",
+      "description": "Clears heat, dries dampness, stops bleeding",
+      "category": "Heat Clearing",
+      "properties": "Bitter, cold",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Coptis Rhizome",
+      "chinese_name": "黃連",
+      "description": "Clears heat, dries dampness, detoxifies",
+      "category": "Heat Clearing",
+      "properties": "Bitter, cold",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Poria",
+      "chinese_name": "茯苓",
+      "description": "Promotes urination, strengthens spleen, calms spirit",
+      "category": "Dampness Draining",
+      "properties": "Sweet, bland, neutral",
+      "dosage_range": "9-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Atractylodes Rhizome",
+      "chinese_name": "白朮",
+      "description": "Tonifies spleen qi, dries dampness, stabilizes exterior",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, bitter, warm",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Coix Seed",
+      "chinese_name": "薏苡仁",
+      "description": "Promotes urination, strengthens spleen, clears heat",
+      "category": "Dampness Draining",
+      "properties": "Sweet, bland, slightly cold",
+      "dosage_range": "15-30g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Pinellia Rhizome",
+      "chinese_name": "半夏",
+      "description": "Dries dampness, transforms phlegm, harmonizes stomach",
+      "category": "Phlegm Transforming",
+      "properties": "Acrid, warm, toxic",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Tangerine Peel",
+      "chinese_name": "陳皮",
+      "description": "Regulates qi, dries dampness, transforms phlegm",
+      "category": "Qi Regulating",
+      "properties": "Acrid, bitter, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Magnolia Bark",
+      "chinese_name": "厚朴",
+      "description": "Promotes qi circulation, dries dampness, reduces distension",
+      "category": "Qi Regulating",
+      "properties": "Bitter, acrid, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Cinnamon Bark",
+      "chinese_name": "肉桂",
+      "description": "Warms kidney yang, strengthens fire, disperses cold",
+      "category": "Yang Tonifying",
+      "properties": "Acrid, sweet, hot",
+      "dosage_range": "1-4.5g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Aconite Root",
+      "chinese_name": "附子",
+      "description": "Restores yang, rescues from collapse, warms spleen and kidney",
+      "category": "Yang Tonifying",
+      "properties": "Acrid, sweet, hot, toxic",
+      "dosage_range": "3-15g",
+      "approval_status": "Restricted",
+      "contraindications": "Pregnancy, yin deficiency with heat signs"
+    },
+    {
+      "name": "Dried Ginger",
+      "chinese_name": "乾薑",
+      "description": "Warms middle jiao, rescues yang, warms lung",
+      "category": "Interior Warming",
+      "properties": "Acrid, hot",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Ephedra Herb",
+      "chinese_name": "麻黃",
+      "description": "Induces sweating, promotes urination, stops wheezing",
+      "category": "Exterior Releasing",
+      "properties": "Acrid, slightly bitter, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Restricted",
+      "contraindications": "Hypertension, heart disease, insomnia"
+    },
+    {
+      "name": "Cassia Twig",
+      "chinese_name": "桂枝",
+      "description": "Releases exterior, warms yang qi, promotes qi and blood circulation",
+      "category": "Exterior Releasing",
+      "properties": "Acrid, sweet, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "White Peony Root",
+      "chinese_name": "白芍",
+      "description": "Nourishes blood, regulates menstruation, calms liver yang",
+      "category": "Blood Tonifying",
+      "properties": "Bitter, sour, slightly cold",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Ligusticum Rhizome",
+      "chinese_name": "川芎",
+      "description": "Activates blood, promotes qi circulation, expels wind",
+      "category": "Blood Activating",
+      "properties": "Acrid, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Red Peony Root",
+      "chinese_name": "赤芍",
+      "description": "Clears heat, cools blood, activates blood circulation",
+      "category": "Heat Clearing",
+      "properties": "Bitter, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Safflower",
+      "chinese_name": "紅花",
+      "description": "Activates blood, removes blood stasis, regulates menstruation",
+      "category": "Blood Activating",
+      "properties": "Acrid, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Peach Kernel",
+      "chinese_name": "桃仁",
+      "description": "Activates blood, removes blood stasis, moistens intestines",
+      "category": "Blood Activating",
+      "properties": "Bitter, sweet, neutral",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Gastrodia Rhizome",
+      "chinese_name": "天麻",
+      "description": "Calms liver wind, stops tremors, relieves headache",
+      "category": "Liver Wind Calming",
+      "properties": "Sweet, neutral",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Uncaria Stem",
+      "chinese_name": "鉤藤",
+      "description": "Calms liver wind, clears heat, relieves spasms",
+      "category": "Liver Wind Calming",
+      "properties": "Sweet, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Dragon Bone",
+      "chinese_name": "龍骨",
+      "description": "Calms spirit, astringes essence, stops bleeding",
+      "category": "Spirit Calming",
+      "properties": "Sweet, astringent, neutral",
+      "dosage_range": "15-30g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Oyster Shell",
+      "chinese_name": "牡蠣",
+      "description": "Calms liver yang, astringes essence, softens hardness",
+      "category": "Spirit Calming",
+      "properties": "Salty, slightly cold",
+      "dosage_range": "15-30g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Polygala Root",
+      "chinese_name": "遠志",
+      "description": "Calms spirit, expels phlegm, reduces swelling",
+      "category": "Spirit Calming",
+      "properties": "Bitter, acrid, slightly warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Jujube Date",
+      "chinese_name": "大棗",
+      "description": "Tonifies spleen qi, nourishes blood, calms spirit",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, warm",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Fresh Ginger",
+      "chinese_name": "生薑",
+      "description": "Releases exterior, warms middle jiao, stops vomiting",
+      "category": "Exterior Releasing",
+      "properties": "Acrid, slightly warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Platycodon Root",
+      "chinese_name": "桔梗",
+      "description": "Opens lung qi, expels phlegm, promotes discharge of pus",
+      "category": "Phlegm Transforming",
+      "properties": "Bitter, acrid, neutral",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Fritillaria Bulb",
+      "chinese_name": "川貝母",
+      "description": "Clears heat, transforms phlegm, stops cough",
+      "category": "Phlegm Transforming",
+      "properties": "Bitter, sweet, slightly cold",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Ophiopogon Root",
+      "chinese_name": "麥門冬",
+      "description": "Nourishes yin, moistens lung, clears heart heat",
+      "category": "Yin Tonifying",
+      "properties": "Sweet, slightly bitter, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Dendrobium Stem",
+      "chinese_name": "石斛",
+      "description": "Nourishes stomach yin, clears heat, brightens eyes",
+      "category": "Yin Tonifying",
+      "properties": "Sweet, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "American Ginseng",
+      "chinese_name": "西洋參",
+      "description": "Tonifies qi, nourishes yin, clears heat",
+      "category": "Qi Tonifying",
+      "properties": "Sweet, slightly bitter, cool",
+      "dosage_range": "3-6g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Cordyceps",
+      "chinese_name": "冬蟲夏草",
+      "description": "Tonifies lung and kidney, stops bleeding, transforms phlegm",
+      "category": "Yang Tonifying",
+      "properties": "Sweet, warm",
+      "dosage_range": "3-9g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Eucommia Bark",
+      "chinese_name": "杜仲",
+      "description": "Tonifies liver and kidney, strengthens bones and tendons",
+      "category": "Yang Tonifying",
+      "properties": "Sweet, warm",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Morinda Root",
+      "chinese_name": "巴戟天",
+      "description": "Tonifies kidney yang, strengthens bones and tendons",
+      "category": "Yang Tonifying",
+      "properties": "Sweet, acrid, slightly warm",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Epimedium Herb",
+      "chinese_name": "淫羊藿",
+      "description": "Tonifies kidney yang, strengthens bones and tendons",
+      "category": "Yang Tonifying",
+      "properties": "Acrid, sweet, warm",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Dipsacus Root",
+      "chinese_name": "續斷",
+      "description": "Tonifies liver and kidney, strengthens bones and tendons",
+      "category": "Yang Tonifying",
+      "properties": "Bitter, acrid, slightly warm",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Achyranthes Root",
+      "chinese_name": "牛膝",
+      "description": "Activates blood, strengthens bones and tendons, promotes urination",
+      "category": "Blood Activating",
+      "properties": "Bitter, sour, neutral",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Polygonum Root",
+      "chinese_name": "何首烏",
+      "description": "Tonifies liver and kidney, nourishes blood, blackens hair",
+      "category": "Blood Tonifying",
+      "properties": "Bitter, sweet, astringent, slightly warm",
+      "dosage_range": "9-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Lycium Root Bark",
+      "chinese_name": "地骨皮",
+      "description": "Clears heat, cools blood, clears lung heat",
+      "category": "Heat Clearing",
+      "properties": "Sweet, cold",
+      "dosage_range": "6-15g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Moutan Bark",
+      "chinese_name": "牡丹皮",
+      "description": "Clears heat, cools blood, activates blood circulation",
+      "category": "Heat Clearing",
+      "properties": "Bitter, acrid, slightly cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Gardenia Fruit",
+      "chinese_name": "梔子",
+      "description": "Clears heat, eliminates irritability, cools blood",
+      "category": "Heat Clearing",
+      "properties": "Bitter, cold",
+      "dosage_range": "6-12g",
+      "approval_status": "Approved"
+    },
+    {
+      "name": "Rhubarb Root",
+      "chinese_name": "大黃",
+      "description": "Purges heat, activates blood, detoxifies",
+      "category": "Purgative",
+      "properties": "Bitter, cold",
+      "dosage_range": "3-12g",
+      "approval_status": "Approved"
+    }
+  ]
+}

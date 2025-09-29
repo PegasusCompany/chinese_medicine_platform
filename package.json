@@ -1,0 +1,13 @@
+{
+  "name": "chinese-medicine-platform",
+  "version": "1.0.0",
+  "description": "Platform connecting Chinese medicine practitioners with herb suppliers",
+  "scripts": {
+    "dev": "docker-compose up --build",
+    "down": "docker-compose down",
+    "clean": "docker-compose down -v"
+  },
+  "keywords": ["chinese-medicine", "herbs", "marketplace"],
+  "author": "",
+  "license": "MIT"
+}
