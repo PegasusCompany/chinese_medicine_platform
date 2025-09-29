@@ -58,3 +58,26 @@ coverage/
 # Temporary folders
 tmp/
 temp/
+
+# Package manager files (keep package-lock.json for reproducible builds)
+yarn.lock
+pnpm-lock.yaml
+
+# IDE and editor files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/extensions.json
+
+# Git files
+.git/index.lock
+.git/HEAD.lock
+.git/refs/heads/*.lock
+
+# Docker volumes and data
+postgres_data/
+docker-data/
+
+# Development files
+*.tsbuildinfo
+.eslintcache
