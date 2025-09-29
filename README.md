@@ -191,11 +191,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🏆 **AWS AI Hackathon Submission**
 
-**Project Name**: Herb Supply Chain Revolution for Solo TCM Practitioners  
+**Project Name**: Herb Supply Revolution for Chinese Medicine Practitioners  
 **Category**: Freestyle  
 **Team**: PegasusCompany  
 
-**Innovation**: Democratizing Traditional Chinese Medicine through AI-powered supply chain revolution, enabling independent practitioners to compete with large medical groups while providing better patient care.
+**Innovation**: Democratizing Traditional Chinese Medicine through AI-powered supply chain revolution, enabling independent Chinese Medicine practitioners to compete with large medical groups while providing better patient care. This is a game-changing herb sourcing for solo Traditional Chinese Medicine practitioners, eliminating inventory barriers (i.e. herb procurement and maintenance), reducing startup costs, and connecting them to quality suppliers instantly. 
 
 ---
 
