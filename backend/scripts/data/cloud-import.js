@@ -125,7 +125,7 @@ class CloudHerbImporter extends HerbImporter {
   }
 
   async logImport(logData) {
-    const db = require('../config/database');
+    const db = require('../../config/database');
     
     try {
       await db.query(`
@@ -150,7 +150,7 @@ class CloudHerbImporter extends HerbImporter {
   }
 
   async getImportHistory() {
-    const db = require('../config/database');
+    const db = require('../../config/database');
     
     try {
       const result = await db.query(`
@@ -172,7 +172,7 @@ const getConfig = () => {
   
   const configs = {
     development: {
-      defaultSource: '../data/hk-common-herbs.json'
+      defaultSource: '../../data/hk-common-herbs.json'
     },
     production: {
       defaultSource: process.env.HERBS_DATA_URL || 's3://your-bucket/herbs-data.json'

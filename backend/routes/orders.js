@@ -74,13 +74,15 @@ router.get('/', authenticateToken, async (req, res) => {
 
     if (req.user.user_type === 'supplier') {
       query = `
-        SELECT o.*, p.patient_name, p.treatment_days, u.name as practitioner_name,
+        SELECT o.*, p.patient_name, p.treatment_days, p.doses_per_day, u.name as practitioner_name,
                json_agg(
                  json_build_object(
                    'herb_name', h.name,
                    'chinese_name', h.chinese_name,
                    'quantity_per_day', pi.quantity_per_day,
-                   'total_quantity', pi.total_quantity
+                   'total_quantity', pi.total_quantity,
+                   'price_per_gram', COALESCE(si.price_per_gram, 0),
+                   'line_total', ROUND(COALESCE(si.price_per_gram, 0) * pi.total_quantity, 2)
                  )
                ) as items
         FROM orders o
@@ -88,21 +90,24 @@ router.get('/', authenticateToken, async (req, res) => {
         JOIN users u ON p.practitioner_id = u.id
         LEFT JOIN prescription_items pi ON p.id = pi.prescription_id
         LEFT JOIN herbs h ON pi.herb_id = h.id
+        LEFT JOIN supplier_inventory si ON (si.supplier_id = o.supplier_id AND si.herb_id = h.id)
         WHERE o.supplier_id = $1
-        GROUP BY o.id, p.patient_name, p.treatment_days, u.name
+        GROUP BY o.id, p.patient_name, p.treatment_days, p.doses_per_day, u.name
         ORDER BY o.created_at DESC
       `;
       params = [req.user.id];
     } else {
       query = `
         SELECT o.*, p.patient_name, p.patient_phone, p.patient_address, p.patient_dob, 
-               p.symptoms, p.diagnosis, p.treatment_days, u.name as supplier_name,
+               p.symptoms, p.diagnosis, p.treatment_days, p.doses_per_day, u.name as supplier_name,
                json_agg(
                  json_build_object(
                    'herb_name', h.name,
                    'chinese_name', h.chinese_name,
                    'quantity_per_day', pi.quantity_per_day,
-                   'total_quantity', pi.total_quantity
+                   'total_quantity', pi.total_quantity,
+                   'price_per_gram', COALESCE(si.price_per_gram, 0),
+                   'line_total', ROUND(COALESCE(si.price_per_gram, 0) * pi.total_quantity, 2)
                  )
                ) as items
         FROM orders o
@@ -110,9 +115,10 @@ router.get('/', authenticateToken, async (req, res) => {
         JOIN users u ON o.supplier_id = u.id
         LEFT JOIN prescription_items pi ON p.id = pi.prescription_id
         LEFT JOIN herbs h ON pi.herb_id = h.id
+        LEFT JOIN supplier_inventory si ON (si.supplier_id = o.supplier_id AND si.herb_id = h.id)
         WHERE p.practitioner_id = $1
         GROUP BY o.id, p.patient_name, p.patient_phone, p.patient_address, p.patient_dob, 
-                 p.symptoms, p.diagnosis, p.treatment_days, u.name
+                 p.symptoms, p.diagnosis, p.treatment_days, p.doses_per_day, u.name
         ORDER BY o.created_at DESC
       `;
       params = [req.user.id];

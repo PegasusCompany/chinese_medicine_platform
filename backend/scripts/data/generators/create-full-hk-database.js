@@ -241,7 +241,7 @@ function getApprovalStatus(name) {
 
 // Generate and save the database
 const database = createFullDatabase();
-const outputPath = path.join(__dirname, '../data/hk-comprehensive-300-herbs.json');
+const outputPath = path.join(__dirname, '../../../data/hk-comprehensive-300-herbs.json');
 fs.writeFileSync(outputPath, JSON.stringify(database, null, 2));
 
 console.log(`✅ Generated comprehensive Hong Kong herbs database!`);

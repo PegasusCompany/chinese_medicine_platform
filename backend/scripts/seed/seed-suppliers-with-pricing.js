@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const db = require('../config/database');
+const db = require('../../config/database');
 
 // Hong Kong Chinese Herb Pricing Data (HK$ per gram)
 const herbPricing = {

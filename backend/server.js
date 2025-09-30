@@ -22,7 +22,11 @@ app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/orders', orderRoutes);
 
-// Health check
+// Health check endpoints
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Chinese Medicine Platform API is running', timestamp: new Date().toISOString() });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Chinese Medicine Platform API is running' });
 });

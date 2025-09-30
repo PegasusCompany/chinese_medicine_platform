@@ -6,13 +6,24 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "migrate": "node scripts/migrate.js",
-    "seed": "node scripts/seed-users.js",
-    "import-herbs": "node scripts/import-herbs.js",
-    "cloud-import": "node scripts/cloud-import.js",
-    "generate-samples": "node scripts/import-herbs.js --generate-samples",
-    "import-hk-herbs": "node scripts/import-herbs.js data/hk-common-herbs.json --update-existing",
-    "seed-suppliers": "node scripts/seed-suppliers-with-pricing.js"
+    
+    "setup": "node scripts/setup/setup-foundation.js",
+    
+    "migrate": "node scripts/database/migrate.js",
+    "cleanup": "node scripts/database/cleanup.js",
+    "add-doses": "node scripts/database/migrations/add-doses-per-day.js",
+    "add-herb-columns": "node scripts/database/migrations/add-herb-columns.js",
+    
+    "seed": "node scripts/seed/seed-users.js",
+    "seed-suppliers": "node scripts/seed/seed-suppliers-with-pricing.js",
+    "enrich-inventory": "node scripts/seed/enrich-supplier-inventory.js",
+    "demo-data": "node scripts/seed/demo/create-demo-data.js",
+    
+    "import-herbs": "node scripts/data/import-herbs.js",
+    "cloud-import": "node scripts/data/cloud-import.js",
+    "generate-samples": "node scripts/data/import-herbs.js --generate-samples",
+    "import-hk-herbs": "node scripts/data/import-herbs.js data/hk-comprehensive-herbs.json --update-existing",
+    "generate-herbs": "node scripts/data/generators/generate-comprehensive-herbs.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,7 +34,8 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.11.3"
+    "mysql2": "^3.15.1",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

@@ -169,15 +169,15 @@ const PractitionerDashboard = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      awaiting_supplier_confirmation: 'bg-orange-100 text-orange-800',
-      assigned: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-purple-100 text-purple-800',
-      completed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      cancellation_pending: 'bg-red-100 text-red-800'
+      pending: 'bg-warning-100 text-warning-800',
+      awaiting_supplier_confirmation: 'bg-warning-100 text-warning-800',
+      assigned: 'bg-primary-100 text-primary-800',
+      in_progress: 'bg-primary-200 text-primary-900',
+      completed: 'bg-success-100 text-success-800',
+      cancelled: 'bg-error-100 text-error-800',
+      cancellation_pending: 'bg-error-100 text-error-800'
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-secondary-100 text-secondary-800';
   };
 
   const getStatusText = (status) => {
@@ -199,69 +199,101 @@ const PractitionerDashboard = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Practitioner Dashboard</h1>
-          {getActionItemsCount() > 0 && (
-            <p className="text-sm text-orange-600 mt-1">
-              {getActionItemsCount()} prescription{getActionItemsCount() !== 1 ? 's' : ''} require{getActionItemsCount() === 1 ? 's' : ''} your attention
-            </p>
-          )}
-        </div>
-        <Link 
-          to="/prescriptions/new"
-          className="bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
-        >
-          Create New Prescription
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Practitioner Dashboard</h1>
+        {getActionItemsCount() > 0 && (
+          <p className="text-sm text-orange-600 mt-1">
+            {getActionItemsCount()} prescription{getActionItemsCount() !== 1 ? 's' : ''} require{getActionItemsCount() === 1 ? 's' : ''} your attention
+          </p>
+        )}
       </div>
 
-      {/* Dashboard Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">Show:</span>
+      {/* Enhanced Dashboard Filters */}
+      <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg shadow-lg border-l-4 border-primary-500 p-6 mb-6">
+        <div className="flex items-center mb-4">
+          <h3 className="text-lg font-semibold text-primary-800 flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z" />
+            </svg>
+            Filter & Sort Prescriptions
+          </h3>
+          <div className="ml-auto bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium">
+            {filteredPrescriptions.length} of {prescriptions.length} prescriptions
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Show Filter */}
+          <div className="bg-white rounded-lg p-4 border border-primary-200 shadow-sm">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Show Status
+            </label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500"
+              className="w-full px-4 py-3 border-2 border-primary-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 bg-white shadow-sm font-medium transition-colors text-sm"
             >
-              <option value="active">Action Required ({getActionItemsCount()})</option>
-              <option value="all">All Prescriptions</option>
-              <option value="completed">Completed Only</option>
+              <option value="active">🔥 Action Required ({getActionItemsCount()})</option>
+              <option value="all">📋 All Prescriptions</option>
+              <option value="completed">✅ Completed Only</option>
             </select>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">Sort by:</span>
+          {/* Sort Filter */}
+          <div className="bg-white rounded-lg p-4 border border-secondary-200 shadow-sm">
+            <label className="block text-sm font-semibold text-secondary-700 mb-2 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+              </svg>
+              Sort Order
+            </label>
             <select
               value={filters.sortBy}
               onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500"
+              className="w-full px-4 py-3 border-2 border-secondary-300 rounded-lg focus:outline-none focus:border-secondary-500 focus:ring-2 focus:ring-secondary-200 bg-white shadow-sm font-medium transition-colors text-sm"
             >
-              <option value="priority">Priority (Action Items First)</option>
-              <option value="date">Date (Newest First)</option>
-              <option value="patient">Patient Name (A-Z)</option>
+              <option value="priority">⚡ Priority (Action Items First)</option>
+              <option value="date">📅 Date (Newest First)</option>
+              <option value="patient">👤 Patient Name (A-Z)</option>
             </select>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">Period:</span>
+          {/* Date Range Filter */}
+          <div className="bg-white rounded-lg p-4 border border-primary-200 shadow-sm">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Time Period
+            </label>
             <select
               value={filters.dateRange}
               onChange={(e) => handleFilterChange('dateRange', e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-primary-500"
+              className="w-full px-4 py-3 border-2 border-primary-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 bg-white shadow-sm font-medium transition-colors text-sm"
             >
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="all">All time</option>
+              <option value="7">📊 Last 7 days</option>
+              <option value="30">📈 Last 30 days</option>
+              <option value="90">📉 Last 90 days</option>
+              <option value="all">🗓️ All time</option>
             </select>
           </div>
+        </div>
 
-          <div className="ml-auto text-sm text-gray-600">
-            Showing {filteredPrescriptions.length} of {prescriptions.length} prescriptions
-          </div>
+        {/* Active Filter Tags */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-xs font-medium">
+            Status: {filters.status === 'active' ? 'Action Required' : filters.status === 'all' ? 'All Prescriptions' : 'Completed Only'}
+          </span>
+          <span className="bg-secondary-100 text-secondary-800 px-3 py-1 rounded-full text-xs font-medium">
+            Sorted by: {filters.sortBy === 'priority' ? 'Priority' : filters.sortBy === 'date' ? 'Date' : 'Patient Name'}
+          </span>
+          <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full text-xs font-medium">
+            Period: {filters.dateRange === 'all' ? 'All time' : `Last ${filters.dateRange} days`}
+          </span>
         </div>
       </div>
 
@@ -273,20 +305,14 @@ const PractitionerDashboard = () => {
             <div className="text-center py-8">
               {prescriptions.length === 0 ? (
                 <div>
-                  <p className="text-gray-500 mb-4">No prescriptions yet. Create your first prescription!</p>
-                  <Link 
-                    to="/prescriptions/new"
-                    className="bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600"
-                  >
-                    Create First Prescription
-                  </Link>
+                  <p className="text-gray-500 mb-4">No prescriptions yet. Use the "New Prescription" button in the top menu to create your first prescription!</p>
                 </div>
               ) : (
                 <div>
                   <p className="text-gray-500 mb-4">No prescriptions match your current filters.</p>
                   <button
                     onClick={() => setFilters({ status: 'all', sortBy: 'date', dateRange: 'all' })}
-                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                    className="bg-secondary-500 text-white px-4 py-2 rounded-lg hover:bg-secondary-600 transition-colors"
                   >
                     Show All Prescriptions
                   </button>
@@ -306,7 +332,7 @@ const PractitionerDashboard = () => {
                       <div className="flex items-center space-x-2">
                         <h3 className="font-semibold">Patient: {prescription.patient_name}</h3>
                         {['pending', 'awaiting_supplier_confirmation', 'cancellation_pending'].includes(prescription.status) && (
-                          <span className="bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                          <span className="bg-warning-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                             ACTION REQUIRED
                           </span>
                         )}
@@ -318,7 +344,7 @@ const PractitionerDashboard = () => {
                         </p>
                       )}
                       <p className="text-sm text-gray-600">
-                        Treatment: {prescription.treatment_days} days
+                        Treatment: {prescription.treatment_days} days × {prescription.doses_per_day || 2} doses/day
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -329,13 +355,13 @@ const PractitionerDashboard = () => {
                         <div className="flex flex-wrap gap-2">
                           <Link 
                             to={`/prescriptions/${prescription.id}/suppliers`}
-                            className="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600"
+                            className="bg-success-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-success-600 transition-colors shadow-sm"
                           >
                             Compare Suppliers
                           </Link>
                           <button
                             onClick={() => cancelPrescription(prescription.id, prescription.patient_name)}
-                            className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                            className="bg-error-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-error-600 transition-colors shadow-sm"
                           >
                             Cancel Prescription
                           </button>
@@ -343,12 +369,12 @@ const PractitionerDashboard = () => {
                       )}
                       {prescription.status === 'awaiting_supplier_confirmation' && (
                         <div className="flex space-x-2">
-                          <span className="bg-orange-500 text-white px-3 py-1 rounded text-xs">
+                          <span className="bg-warning-500 text-white px-3 py-1 rounded-lg text-xs">
                             Waiting for Supplier
                           </span>
                           <button
                             onClick={() => cancelPrescription(prescription.id, prescription.patient_name)}
-                            className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                            className="bg-error-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-error-600 transition-colors shadow-sm"
                           >
                             Cancel Prescription
                           </button>
@@ -357,7 +383,7 @@ const PractitionerDashboard = () => {
                       {prescription.status === 'cancellation_pending' && (
                         <Link 
                           to="/orders"
-                          className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                          className="bg-error-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-error-600 transition-colors shadow-sm"
                         >
                           Review Cancellation
                         </Link>
@@ -376,7 +402,7 @@ const PractitionerDashboard = () => {
                           )}
                           <br />
                           <span className="text-gray-600">
-                            {item.quantity_per_day}g/day × {prescription.treatment_days} days = {item.total_quantity}g total
+                            {item.quantity_per_day}g/dose × {prescription.doses_per_day || 2} doses/day × {prescription.treatment_days} days = {item.total_quantity}g total
                           </span>
                         </div>
                       ))}

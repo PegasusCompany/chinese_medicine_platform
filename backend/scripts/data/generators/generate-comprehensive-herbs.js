@@ -521,7 +521,7 @@ comprehensiveHerbsData.herbs = [...comprehensiveHerbsData.herbs, ...additionalCa
 comprehensiveHerbsData.total_herbs = comprehensiveHerbsData.herbs.length;
 
 // Write to file
-const outputPath = path.join(__dirname, '../data/hk-comprehensive-herbs-300.json');
+const outputPath = path.join(__dirname, '../../../data/hk-comprehensive-herbs-300.json');
 fs.writeFileSync(outputPath, JSON.stringify(comprehensiveHerbsData, null, 2));
 
 console.log(`Generated comprehensive herbs database with ${comprehensiveHerbsData.total_herbs} herbs`);
@@ -530,4 +530,4 @@ console.log('\nCategories included:');
 comprehensiveHerbsData.categories.forEach(cat => console.log(`- ${cat}`));
 
 console.log('\nTo import this database:');
-console.log('docker-compose exec backend node scripts/import-herbs.js data/hk-comprehensive-herbs-300.json --update-existing');
+console.log('docker-compose exec backend node scripts/data/import-herbs.js data/hk-comprehensive-herbs-300.json --update-existing');

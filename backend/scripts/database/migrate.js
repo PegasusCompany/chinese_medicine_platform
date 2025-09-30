@@ -1,4 +1,4 @@
-const db = require('../config/database');
+const db = require('../../config/database');
 
 const createTables = async () => {
   try {
@@ -45,6 +45,7 @@ const createTables = async () => {
         patient_phone VARCHAR(20),
         patient_address TEXT,
         treatment_days INTEGER NOT NULL,
+        doses_per_day INTEGER NOT NULL DEFAULT 2,
         status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'assigned', 'in_progress', 'completed', 'cancelled')),
         notes TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

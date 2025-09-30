@@ -12,23 +12,23 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-gradient-to-r from-primary-900 to-primary-800 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link to="/" className="text-xl font-bold text-primary-600">
+          <Link to="/" className="text-xl font-bold text-white hover:text-primary-100 transition-colors">
             中医平台 Chinese Medicine Platform
           </Link>
           
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <span className="text-gray-600">
+                <span className="text-primary-100">
                   Welcome, {user.name} ({user.user_type})
                 </span>
                 
                 <Link 
                   to="/" 
-                  className="text-primary-600 hover:text-primary-700"
+                  className="text-white hover:text-primary-200 transition-colors"
                 >
                   Dashboard
                 </Link>
@@ -36,7 +36,7 @@ const Navbar = () => {
                 {user.user_type === 'practitioner' && (
                   <Link 
                     to="/prescriptions/new" 
-                    className="bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
+                    className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition-colors shadow-md"
                   >
                     New Prescription
                   </Link>
@@ -44,7 +44,7 @@ const Navbar = () => {
                 
                 <Link 
                   to="/orders" 
-                  className="text-primary-600 hover:text-primary-700"
+                  className="text-white hover:text-primary-200 transition-colors"
                 >
                   Orders
                 </Link>
@@ -52,7 +52,7 @@ const Navbar = () => {
                 {user.user_type === 'supplier' && (
                   <Link 
                     to="/inventory" 
-                    className="text-primary-600 hover:text-primary-700"
+                    className="text-white hover:text-primary-200 transition-colors"
                   >
                     Inventory
                   </Link>
@@ -60,7 +60,7 @@ const Navbar = () => {
                 
                 <button 
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-800"
+                  className="text-primary-200 hover:text-white transition-colors"
                 >
                   Logout
                 </button>
@@ -69,13 +69,13 @@ const Navbar = () => {
               <div className="space-x-2">
                 <Link 
                   to="/login" 
-                  className="text-primary-600 hover:text-primary-700"
+                  className="text-white hover:text-primary-200 transition-colors"
                 >
                   Login
                 </Link>
                 <Link 
                   to="/register" 
-                  className="bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition-colors shadow-md"
                 >
                   Register
                 </Link>

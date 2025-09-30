@@ -169,7 +169,7 @@ const SupplierComparison = () => {
           <p>No suppliers currently have all the required herbs in sufficient quantities for this prescription.</p>
           <button 
             onClick={() => navigate('/')}
-            className="mt-4 bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
+            className="mt-4 bg-primary-900 text-white px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors shadow-md"
           >
             Back to Dashboard
           </button>
@@ -270,7 +270,7 @@ const SupplierComparison = () => {
           <div className="flex items-end">
             <button
               onClick={clearFilters}
-              className="w-full bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              className="w-full bg-secondary-500 text-white px-4 py-2 rounded-lg hover:bg-secondary-600 transition-colors"
             >
               Clear Filters
             </button>
@@ -301,7 +301,7 @@ const SupplierComparison = () => {
             <p>Try adjusting your budget or quality requirements.</p>
             <button 
               onClick={clearFilters}
-              className="mt-2 bg-primary-500 text-white px-4 py-2 rounded hover:bg-primary-600"
+              className="mt-2 bg-primary-900 text-white px-4 py-2 rounded-lg hover:bg-primary-800 transition-colors shadow-md"
             >
               Clear Filters
             </button>
@@ -311,12 +311,12 @@ const SupplierComparison = () => {
           <div key={supplier.supplier_id} className="bg-white rounded-lg shadow-lg p-6 relative">
             {/* Ranking Badge */}
             {index === 0 && filters.sortBy === 'price' && (
-              <div className="absolute top-4 right-4 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              <div className="absolute top-4 right-4 bg-success-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                 💰 BEST PRICE
               </div>
             )}
             {index === 0 && filters.sortBy === 'quality' && (
-              <div className="absolute top-4 right-4 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+              <div className="absolute top-4 right-4 bg-primary-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                 ⭐ BEST QUALITY
               </div>
             )}
@@ -409,7 +409,7 @@ const SupplierComparison = () => {
               </div>
               <button
                 onClick={() => selectSupplier(supplier.supplier_id)}
-                className="bg-primary-500 text-white px-6 py-2 rounded hover:bg-primary-600 font-medium"
+                className="bg-primary-900 text-white px-6 py-2 rounded-lg hover:bg-primary-800 font-medium transition-colors shadow-md"
               >
                 Select This Supplier
               </button>

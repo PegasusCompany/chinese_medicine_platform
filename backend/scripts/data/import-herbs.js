@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
-const db = require('../config/database');
+const db = require('../../config/database');
 
 class HerbImporter {
   constructor() {
@@ -221,7 +221,7 @@ Ginseng,人参,Adaptogenic herb for energy and vitality,Tonifying,Sweet and slig
 Astragalus,黄芪,Immune system support and qi tonification,Tonifying,Sweet and slightly warm,9-30g
 Licorice Root,甘草,Harmonizing herb used in many formulas,Harmonizing,Sweet and neutral,3-9g`;
 
-    fs.writeFileSync(path.join(__dirname, '../data/sample-herbs.csv'), csvContent);
+    fs.writeFileSync(path.join(__dirname, '../../data/sample-herbs.csv'), csvContent);
 
     // Generate sample JSON file
     const jsonContent = {
@@ -250,7 +250,7 @@ Licorice Root,甘草,Harmonizing herb used in many formulas,Harmonizing,Sweet an
     };
 
     // Create data directory if it doesn't exist
-    const dataDir = path.join(__dirname, '../data');
+    const dataDir = path.join(__dirname, '../../data');
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
@@ -281,8 +281,8 @@ async function main() {
     console.log('  --batch-size=N       Process N herbs at a time (default: 100)');
     console.log('');
     console.log('Examples:');
-    console.log('  node import-herbs.js ../data/hk-herbs.csv');
-    console.log('  node import-herbs.js ../data/herbs.json --update-existing');
+    console.log('  node import-herbs.js ../../data/hk-herbs.csv');
+    console.log('  node import-herbs.js ../../data/herbs.json --update-existing');
     console.log('  node import-herbs.js --generate-samples');
     return;
   }

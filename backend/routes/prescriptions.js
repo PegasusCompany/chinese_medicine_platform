@@ -40,17 +40,21 @@ router.get('/', authenticateToken, async (req, res) => {
                    'chinese_name', h.chinese_name,
                    'quantity_per_day', pi.quantity_per_day,
                    'total_quantity', pi.total_quantity,
-                   'notes', pi.notes
+                   'notes', pi.notes,
+                   'price_per_gram', COALESCE(si.price_per_gram, 0),
+                   'line_total', ROUND(COALESCE(si.price_per_gram, 0) * pi.total_quantity, 2)
                  )
                ) as items
         FROM prescriptions p
         JOIN users u ON p.practitioner_id = u.id
         LEFT JOIN prescription_items pi ON p.id = pi.prescription_id
         LEFT JOIN herbs h ON pi.herb_id = h.id
+        LEFT JOIN supplier_inventory si ON (si.supplier_id = $1 AND si.herb_id = h.id)
         WHERE p.status = 'pending'
         GROUP BY p.id, u.name
         ORDER BY p.created_at DESC
       `;
+      params = [req.user.id];
       params = [];
     }
 
@@ -68,6 +72,7 @@ router.post('/', [
   requireRole('practitioner'),
   body('patient_name').trim().isLength({ min: 2 }),
   body('treatment_days').isInt({ min: 1 }),
+  body('doses_per_day').isInt({ min: 1, max: 10 }),
   body('items').isArray({ min: 1 })
 ], async (req, res) => {
   try {
@@ -76,14 +81,14 @@ router.post('/', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { patient_name, patient_phone, patient_address, patient_dob, symptoms, diagnosis, treatment_days, items, notes } = req.body;
+    const { patient_name, patient_phone, patient_address, patient_dob, symptoms, diagnosis, treatment_days, doses_per_day, items, notes } = req.body;
 
     await db.query('BEGIN');
 
     // Create prescription
     const prescriptionResult = await db.query(
-      'INSERT INTO prescriptions (practitioner_id, patient_name, patient_phone, patient_address, patient_dob, symptoms, diagnosis, treatment_days, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-      [req.user.id, patient_name, patient_phone, patient_address, patient_dob || null, symptoms, diagnosis, treatment_days, notes]
+      'INSERT INTO prescriptions (practitioner_id, patient_name, patient_phone, patient_address, patient_dob, symptoms, diagnosis, treatment_days, doses_per_day, notes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+      [req.user.id, patient_name, patient_phone, patient_address, patient_dob || null, symptoms, diagnosis, treatment_days, doses_per_day, notes]
     );
 
     const prescriptionId = prescriptionResult.rows[0].id;
@@ -119,7 +124,7 @@ router.post('/', [
         }
       }
 
-      const totalQuantity = item.quantity_per_day * treatment_days;
+      const totalQuantity = item.quantity_per_day * treatment_days * doses_per_day;
 
       await db.query(
         'INSERT INTO prescription_items (prescription_id, herb_id, quantity_per_day, total_quantity, notes) VALUES ($1, $2, $3, $4, $5)',
@@ -277,12 +282,9 @@ router.post('/:prescriptionId/select-supplier', [
 
     try {
       // Create order with pending confirmation status
-      const estimatedCompletion = new Date();
-      estimatedCompletion.setDate(estimatedCompletion.getDate() + 3);
-
       const orderResult = await db.query(
         'INSERT INTO orders (prescription_id, supplier_id, estimated_completion, total_amount, notes, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        [prescriptionId, supplier_id, estimatedCompletion, total_amount, notes || 'Order placed by practitioner', 'pending_confirmation']
+        [prescriptionId, supplier_id, null, total_amount, notes || 'Order placed by practitioner', 'pending_confirmation']
       );
 
       // Update prescription status to awaiting supplier confirmation
@@ -310,31 +312,70 @@ router.post('/:prescriptionId/select-supplier', [
 // Search herbs for autocomplete (supports both English and Chinese)
 router.get('/herbs/search', authenticateToken, async (req, res) => {
   try {
-    const { q } = req.query; // search query
+    const { q, lang } = req.query; // search query and language preference
     
     if (!q || q.length < 1) {
       return res.json([]);
     }
     
-    // Search in both English and Chinese names
-    const result = await db.query(`
-      SELECT id, name, chinese_name, description, category
-      FROM herbs 
-      WHERE 
-        LOWER(name) LIKE LOWER($1) OR 
-        chinese_name LIKE $1 OR
-        LOWER(description) LIKE LOWER($1)
-      ORDER BY 
-        CASE 
-          WHEN LOWER(name) LIKE LOWER($2) THEN 1
-          WHEN chinese_name LIKE $2 THEN 2
-          WHEN LOWER(name) LIKE LOWER($1) THEN 3
-          WHEN chinese_name LIKE $1 THEN 4
-          ELSE 5
-        END,
-        name
-      LIMIT 20
-    `, [`%${q}%`, `${q}%`]);
+    let query, params;
+    
+    if (lang === 'en') {
+      // Search primarily in English names
+      query = `
+        SELECT id, name, chinese_name, description, category
+        FROM herbs 
+        WHERE LOWER(name) LIKE LOWER($1) OR LOWER(description) LIKE LOWER($1)
+        ORDER BY 
+          CASE 
+            WHEN LOWER(name) LIKE LOWER($2) THEN 1
+            WHEN LOWER(name) LIKE LOWER($1) THEN 2
+            ELSE 3
+          END,
+          name
+        LIMIT 20
+      `;
+      params = [`%${q}%`, `${q}%`];
+    } else if (lang === 'zh') {
+      // Search primarily in Chinese names
+      query = `
+        SELECT id, name, chinese_name, description, category
+        FROM herbs 
+        WHERE chinese_name LIKE $1
+        ORDER BY 
+          CASE 
+            WHEN chinese_name LIKE $2 THEN 1
+            WHEN chinese_name LIKE $1 THEN 2
+            ELSE 3
+          END,
+          chinese_name
+        LIMIT 20
+      `;
+      params = [`%${q}%`, `${q}%`];
+    } else {
+      // Search in both English and Chinese names (default behavior)
+      query = `
+        SELECT id, name, chinese_name, description, category
+        FROM herbs 
+        WHERE 
+          LOWER(name) LIKE LOWER($1) OR 
+          chinese_name LIKE $1 OR
+          LOWER(description) LIKE LOWER($1)
+        ORDER BY 
+          CASE 
+            WHEN LOWER(name) LIKE LOWER($2) THEN 1
+            WHEN chinese_name LIKE $2 THEN 2
+            WHEN LOWER(name) LIKE LOWER($1) THEN 3
+            WHEN chinese_name LIKE $1 THEN 4
+            ELSE 5
+          END,
+          name
+        LIMIT 20
+      `;
+      params = [`%${q}%`, `${q}%`];
+    }
+    
+    const result = await db.query(query, params);
     
     res.json(result.rows);
   } catch (error) {
