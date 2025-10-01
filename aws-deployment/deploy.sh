@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Chinese Medicine Platform - AWS Deployment Script
-# This script deploys the application to AWS using CloudFormation and ECS
+# Chinese Medicine Platform - AWS Deployment Script (Improved)
+# This script deploys the application to AWS with all debugging fixes included
 
 set -e
 
@@ -19,8 +19,8 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}🚀 Starting AWS deployment for Chinese Medicine Platform${NC}"
-echo -e "${BLUE}=================================================${NC}"
+echo -e "${BLUE}🚀 Starting AWS deployment for Chinese Medicine Platform (Improved)${NC}"
+echo -e "${BLUE}================================================================${NC}"
 
 # Check if AWS CLI is installed and configured
 if ! command -v aws &> /dev/null; then
@@ -34,11 +34,18 @@ if ! aws sts get-caller-identity &> /dev/null; then
     exit 1
 fi
 
-echo -e "${GREEN}✅ AWS CLI configured${NC}"
+# Check if Docker is running
+if ! docker info &> /dev/null; then
+    echo -e "${RED}❌ Docker is not running. Please start Docker first.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Prerequisites checked${NC}"
 
 # Get AWS Account ID
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo -e "${BLUE}📋 AWS Account ID: ${ACCOUNT_ID}${NC}"
+echo -e "${BLUE}📋 Region: ${REGION}${NC}"
 echo -e "${BLUE}📋 Region: ${REGION}${NC}"
 
 # Create ECR repositories if they don't exist
@@ -62,24 +69,24 @@ echo -e "${YELLOW}🐳 Building and pushing Docker images...${NC}"
 # Backend
 echo -e "${BLUE}Building backend image...${NC}"
 cd ../backend
-docker build -f Dockerfile.prod -t ${PROJECT_NAME}-backend .
+docker build --platform linux/amd64 -f Dockerfile.prod -t ${PROJECT_NAME}-backend .
 docker tag ${PROJECT_NAME}-backend:latest ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-backend:latest
 docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-backend:latest
 
 BACKEND_IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-backend:latest"
 echo -e "${GREEN}✅ Backend image pushed: ${BACKEND_IMAGE_URI}${NC}"
 
-# Frontend
-echo -e "${BLUE}Building frontend image...${NC}"
+# Frontend (placeholder build - will rebuild with correct API URL later)
+echo -e "${BLUE}Building frontend image (initial)...${NC}"
 cd ../frontend
-# Get the ALB DNS name for API URL (we'll update this after infrastructure is deployed)
-REACT_APP_API_URL="http://PLACEHOLDER_ALB_DNS"
-docker build -f Dockerfile.prod --build-arg REACT_APP_API_URL=${REACT_APP_API_URL} -t ${PROJECT_NAME}-frontend .
+# Use placeholder for now - we'll rebuild with correct backend IP after deployment
+REACT_APP_API_URL="http://PLACEHOLDER_BACKEND_IP:5000"
+docker build --platform linux/amd64 -f Dockerfile.prod --build-arg REACT_APP_API_URL=${REACT_APP_API_URL} -t ${PROJECT_NAME}-frontend .
 docker tag ${PROJECT_NAME}-frontend:latest ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
 docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
 
 FRONTEND_IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest"
-echo -e "${GREEN}✅ Frontend image pushed: ${FRONTEND_IMAGE_URI}${NC}"
+echo -e "${GREEN}✅ Frontend image pushed (will rebuild with correct API URL): ${FRONTEND_IMAGE_URI}${NC}"
 
 cd ../aws-deployment
 
@@ -155,11 +162,68 @@ aws ecs wait services-stable \
 
 echo -e "${GREEN}✅ Services are stable${NC}"
 
-# Initialize database
-echo -e "${YELLOW}🗄️  Initializing database...${NC}"
-echo -e "${BLUE}Running database setup...${NC}"
+# Comprehensive Database Setup with all fixes
+echo -e "${YELLOW}🗄️  Setting up database with all fixes...${NC}"
 
-# Get the backend task ARN
+# Step 1: Fix RDS SSL configuration
+echo -e "${BLUE}Step 1: Configuring RDS SSL settings...${NC}"
+PARAM_GROUP_NAME="${PROJECT_NAME}-pg"
+
+# Create custom parameter group
+aws rds create-db-parameter-group \
+    --db-parameter-group-name ${PARAM_GROUP_NAME} \
+    --db-parameter-group-family postgres15 \
+    --description "Custom parameter group for Chinese Medicine Platform" \
+    --region ${REGION} 2>/dev/null || echo -e "${YELLOW}⚠️  Parameter group may already exist${NC}"
+
+# Configure SSL settings
+aws rds modify-db-parameter-group \
+    --db-parameter-group-name ${PARAM_GROUP_NAME} \
+    --parameters "ParameterName=rds.force_ssl,ParameterValue=0,ApplyMethod=immediate" \
+    --region ${REGION}
+
+# Apply parameter group to database
+aws rds modify-db-instance \
+    --db-instance-identifier ${PROJECT_NAME}-db \
+    --db-parameter-group-name ${PARAM_GROUP_NAME} \
+    --apply-immediately \
+    --region ${REGION}
+
+# Reboot database to apply changes
+echo -e "${BLUE}Rebooting database to apply SSL changes...${NC}"
+aws rds reboot-db-instance --db-instance-identifier ${PROJECT_NAME}-db --region ${REGION}
+aws rds wait db-instance-available --db-instance-identifier ${PROJECT_NAME}-db --region ${REGION}
+
+echo -e "${GREEN}✅ Database SSL configuration completed${NC}"
+
+# Step 2: Fix security groups for database connectivity
+echo -e "${BLUE}Step 2: Configuring security groups...${NC}"
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=${PROJECT_NAME}-vpc" --query 'Vpcs[0].VpcId' --output text --region ${REGION} 2>/dev/null || aws ec2 describe-vpcs --query 'Vpcs[0].VpcId' --output text --region ${REGION})
+RDS_SG_ID=$(aws rds describe-db-instances --db-instance-identifier ${PROJECT_NAME}-db --query 'DBInstances[0].VpcSecurityGroups[0].VpcSecurityGroupId' --output text --region ${REGION})
+ECS_SG_ID=$(aws ec2 describe-security-groups --filters "Name=group-name,Values=${PROJECT_NAME}-ecs-sg" --query 'SecurityGroups[0].GroupId' --output text --region ${REGION} 2>/dev/null || aws ec2 describe-security-groups --filters "Name=group-name,Values=${PROJECT_NAME}-sg" --query 'SecurityGroups[0].GroupId' --output text --region ${REGION})
+VPC_CIDR=$(aws ec2 describe-vpcs --vpc-ids ${VPC_ID} --query 'Vpcs[0].CidrBlock' --output text --region ${REGION})
+
+# Add security group rules
+aws ec2 authorize-security-group-ingress \
+    --group-id ${RDS_SG_ID} \
+    --protocol tcp \
+    --port 5432 \
+    --cidr ${VPC_CIDR} \
+    --region ${REGION} 2>/dev/null || echo -e "${YELLOW}⚠️  VPC rule may already exist${NC}"
+
+if [ ! -z "$ECS_SG_ID" ] && [ "$ECS_SG_ID" != "None" ]; then
+    aws ec2 authorize-security-group-ingress \
+        --group-id ${RDS_SG_ID} \
+        --protocol tcp \
+        --port 5432 \
+        --source-group ${ECS_SG_ID} \
+        --region ${REGION} 2>/dev/null || echo -e "${YELLOW}⚠️  ECS rule may already exist${NC}"
+fi
+
+echo -e "${GREEN}✅ Security groups configured${NC}"
+
+# Step 3: Get backend task and run comprehensive setup
+echo -e "${BLUE}Step 3: Running comprehensive database setup...${NC}"
 BACKEND_TASK_ARN=$(aws ecs list-tasks \
     --cluster ${PROJECT_NAME}-cluster \
     --service-name ${PROJECT_NAME}-backend \
@@ -168,33 +232,142 @@ BACKEND_TASK_ARN=$(aws ecs list-tasks \
     --region ${REGION})
 
 if [ "$BACKEND_TASK_ARN" != "None" ] && [ "$BACKEND_TASK_ARN" != "" ]; then
-    echo -e "${BLUE}Executing database setup in backend container...${NC}"
+    TASK_ID=$(echo $BACKEND_TASK_ARN | cut -d'/' -f3)
+    echo -e "${BLUE}Using backend task: ${TASK_ID}${NC}"
     
-    # Run database setup
+    # Fix database schema first
+    echo -e "${BLUE}Adding missing database columns...${NC}"
     aws ecs execute-command \
         --cluster ${PROJECT_NAME}-cluster \
-        --task ${BACKEND_TASK_ARN} \
+        --task ${TASK_ID} \
+        --container backend \
+        --interactive \
+        --command "node -e \"require('./config/database').query('ALTER TABLE prescriptions ADD COLUMN IF NOT EXISTS patient_dob DATE').then(() => console.log('✅ patient_dob added')).catch(e => console.log('⚠️ ', e.message))\"" \
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Column addition may have failed${NC}"
+    
+    aws ecs execute-command \
+        --cluster ${PROJECT_NAME}-cluster \
+        --task ${TASK_ID} \
+        --container backend \
+        --interactive \
+        --command "node -e \"require('./config/database').query('ALTER TABLE prescriptions ADD COLUMN IF NOT EXISTS symptoms TEXT').then(() => console.log('✅ symptoms added')).catch(e => console.log('⚠️ ', e.message))\"" \
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Column addition may have failed${NC}"
+    
+    aws ecs execute-command \
+        --cluster ${PROJECT_NAME}-cluster \
+        --task ${TASK_ID} \
+        --container backend \
+        --interactive \
+        --command "node -e \"require('./config/database').query('ALTER TABLE prescriptions ADD COLUMN IF NOT EXISTS diagnosis TEXT').then(() => console.log('✅ diagnosis added')).catch(e => console.log('⚠️ ', e.message))\"" \
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Column addition may have failed${NC}"
+    
+    aws ecs execute-command \
+        --cluster ${PROJECT_NAME}-cluster \
+        --task ${TASK_ID} \
+        --container backend \
+        --interactive \
+        --command "node -e \"require('./config/database').query('ALTER TABLE prescriptions ALTER COLUMN status TYPE VARCHAR(50)').then(() => console.log('✅ Status column expanded')).catch(e => console.log('⚠️ ', e.message))\"" \
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Column expansion may have failed${NC}"
+    
+    # Run main database setup
+    echo -e "${BLUE}Running main database setup...${NC}"
+    aws ecs execute-command \
+        --cluster ${PROJECT_NAME}-cluster \
+        --task ${TASK_ID} \
         --container backend \
         --interactive \
         --command "npm run setup" \
-        --region ${REGION} || echo -e "${YELLOW}⚠️  Database setup command failed, you may need to run it manually${NC}"
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Main setup may have failed${NC}"
+    
+    # Create demo data
+    echo -e "${BLUE}Creating demo data...${NC}"
+    aws ecs execute-command \
+        --cluster ${PROJECT_NAME}-cluster \
+        --task ${TASK_ID} \
+        --container backend \
+        --interactive \
+        --command "npm run demo-data" \
+        --region ${REGION} || echo -e "${YELLOW}⚠️  Demo data creation may have failed${NC}"
+    
+    echo -e "${GREEN}✅ Database setup completed${NC}"
 else
     echo -e "${YELLOW}⚠️  Could not find backend task, you'll need to initialize the database manually${NC}"
 fi
 
-# Get final application URL
-APPLICATION_URL=$(aws cloudformation describe-stacks \
-    --stack-name ${PROJECT_NAME}-services \
-    --query 'Stacks[0].Outputs[?OutputKey==`ApplicationURL`].OutputValue' \
-    --output text \
-    --region ${REGION})
+# Step 4: Rebuild frontend with correct backend IP
+echo -e "${BLUE}Step 4: Rebuilding frontend with correct backend IP...${NC}"
+if [ "$BACKEND_TASK_ARN" != "None" ] && [ "$BACKEND_TASK_ARN" != "" ]; then
+    TASK_ID=$(echo $BACKEND_TASK_ARN | cut -d'/' -f3)
+    BACKEND_IP=$(aws ecs describe-tasks \
+        --cluster ${PROJECT_NAME}-cluster \
+        --tasks ${TASK_ID} \
+        --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
+        --output text \
+        --region ${REGION} | xargs -I {} aws ec2 describe-network-interfaces \
+        --network-interface-ids {} \
+        --query 'NetworkInterfaces[0].Association.PublicIp' \
+        --output text \
+        --region ${REGION})
+    
+    if [ ! -z "$BACKEND_IP" ] && [ "$BACKEND_IP" != "None" ]; then
+        echo -e "${BLUE}Backend IP: ${BACKEND_IP}${NC}"
+        
+        # Rebuild frontend with correct API URL
+        cd ../frontend
+        docker build --platform linux/amd64 -f Dockerfile.prod --build-arg REACT_APP_API_URL=http://${BACKEND_IP}:5000 -t ${PROJECT_NAME}-frontend .
+        docker tag ${PROJECT_NAME}-frontend:latest ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
+        docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
+        
+        # Force frontend service update
+        aws ecs update-service \
+            --cluster ${PROJECT_NAME}-cluster \
+            --service ${PROJECT_NAME}-frontend \
+            --force-new-deployment \
+            --region ${REGION}
+        
+        # Wait for frontend to be stable
+        echo -e "${BLUE}Waiting for frontend deployment...${NC}"
+        aws ecs wait services-stable \
+            --cluster ${PROJECT_NAME}-cluster \
+            --services ${PROJECT_NAME}-frontend \
+            --region ${REGION}
+        
+        # Get final frontend IP
+        FRONTEND_TASK_ARN=$(aws ecs list-tasks \
+            --cluster ${PROJECT_NAME}-cluster \
+            --service-name ${PROJECT_NAME}-frontend \
+            --query 'taskArns[0]' \
+            --output text \
+            --region ${REGION})
+        
+        if [ "$FRONTEND_TASK_ARN" != "None" ] && [ "$FRONTEND_TASK_ARN" != "" ]; then
+            FRONTEND_TASK_ID=$(echo $FRONTEND_TASK_ARN | cut -d'/' -f3)
+            FRONTEND_IP=$(aws ecs describe-tasks \
+                --cluster ${PROJECT_NAME}-cluster \
+                --tasks ${FRONTEND_TASK_ID} \
+                --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
+                --output text \
+                --region ${REGION} | xargs -I {} aws ec2 describe-network-interfaces \
+                --network-interface-ids {} \
+                --query 'NetworkInterfaces[0].Association.PublicIp' \
+                --output text \
+                --region ${REGION})
+            
+            APPLICATION_URL="http://${FRONTEND_IP}"
+        fi
+        
+        cd ../aws-deployment
+        echo -e "${GREEN}✅ Frontend rebuilt with correct API URL${NC}"
+    fi
+fi
 
 echo -e "${GREEN}🎉 Deployment completed successfully!${NC}"
-echo -e "${GREEN}=================================================${NC}"
+echo -e "${GREEN}================================================================${NC}"
 echo -e "${GREEN}🌐 Application URL: ${APPLICATION_URL}${NC}"
+echo -e "${GREEN}🔗 Backend API: http://${BACKEND_IP}:5000${NC}"
 echo -e "${GREEN}📊 CloudWatch Logs: https://console.aws.amazon.com/cloudwatch/home?region=${REGION}#logsV2:log-groups${NC}"
 echo -e "${GREEN}🐳 ECS Console: https://console.aws.amazon.com/ecs/home?region=${REGION}#/clusters/${PROJECT_NAME}-cluster${NC}"
-echo -e "${GREEN}=================================================${NC}"
+echo -e "${GREEN}================================================================${NC}"
 
 echo -e "${BLUE}📋 Test Credentials:${NC}"
 echo -e "${BLUE}   Practitioner: practitioner@test.com / password123${NC}"

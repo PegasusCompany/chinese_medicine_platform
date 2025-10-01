@@ -31,6 +31,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-vpc
+        - Key: awsApplication
+          Value: arn:aws:resource-groups:us-east-1:975049890307:group/Amazon_AI_Hackathon/0cbvof94ysqsm7ir1zixf6q13f
 
   # Internet Gateway
   InternetGateway:
@@ -39,6 +41,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-igw
+        - Key: awsApplication
+          Value: arn:aws:resource-groups:us-east-1:975049890307:group/Amazon_AI_Hackathon/0cbvof94ysqsm7ir1zixf6q13f
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -231,15 +235,11 @@ Resources:
     Type: AWS::ECS::Cluster
     Properties:
       ClusterName: !Sub ${ProjectName}-cluster
-      CapacityProviders:
-        - FARGATE
-        - FARGATE_SPOT
-      DefaultCapacityProviderStrategy:
-        - CapacityProvider: FARGATE
-          Weight: 1
       Tags:
         - Key: Name
           Value: !Sub ${ProjectName}-cluster
+        - Key: awsApplication
+          Value: arn:aws:resource-groups:us-east-1:975049890307:group/Amazon_AI_Hackathon/0cbvof94ysqsm7ir1zixf6q13f
 
 Outputs:
   VPCId:

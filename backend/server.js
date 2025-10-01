@@ -31,6 +31,27 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Chinese Medicine Platform API is running' });
 });
 
+// Setup endpoint for database initialization
+app.post('/api/setup', async (req, res) => {
+  try {
+    console.log('🏗️  Starting database setup...');
+    const { setupFoundation } = require('./scripts/setup/setup-foundation');
+    await setupFoundation();
+    res.json({ 
+      status: 'success', 
+      message: 'Database setup completed successfully',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Setup failed:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Database setup failed: ' + error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

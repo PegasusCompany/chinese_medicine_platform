@@ -1,0 +1,30 @@
+{
+  "family": "chinese-medicine-platform-frontend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::975049890307:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::975049890307:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "975049890307.dkr.ecr.us-east-1.amazonaws.com/chinese-medicine-platform-frontend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/chinese-medicine-platform-frontend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

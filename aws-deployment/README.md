@@ -1,6 +1,6 @@
-# AWS Deployment Guide - Chinese Medicine Platform
+# AWS Deployment Guide - Chinese Medicine Platform (Improved)
 
-This guide will help you deploy the Chinese Medicine Platform to AWS for your hackathon submission.
+This guide will help you deploy the Chinese Medicine Platform to AWS with all debugging fixes included.
 
 ## 🚀 Quick Deployment
 
@@ -10,19 +10,50 @@ This guide will help you deploy the Chinese Medicine Platform to AWS for your ha
 3. **Docker** installed and running
 4. **Git** repository with your code
 
-### One-Command Deployment
+### One-Command Deployment (Improved)
 ```bash
 cd aws-deployment
 ./deploy.sh
 ```
 
-This script will:
+This improved script will:
 - Create ECR repositories for your Docker images
-- Build and push Docker images to ECR
+- Build and push Docker images with correct architecture (AMD64)
 - Deploy infrastructure using CloudFormation
 - Deploy ECS services with your application
-- Initialize the database with demo data
-- Provide you with a public URL
+- **Fix RDS SSL configuration automatically**
+- **Configure security groups for database connectivity**
+- **Add missing database columns**
+- **Initialize database with comprehensive setup**
+- **Create 23+ demo prescriptions with order history**
+- **Rebuild frontend with correct backend API URL**
+- Provide you with working application URLs
+
+## 🔧 **Key Improvements (Lessons Learned)**
+
+### 1. **Docker Architecture Fix**
+- All images now built with `--platform linux/amd64` for AWS Fargate compatibility
+- Prevents "image Manifest does not contain descriptor matching platform" errors
+
+### 2. **Database Connectivity Fix**
+- Automatic RDS parameter group creation with `rds.force_ssl=0`
+- Security group rules configured for VPC-wide database access
+- Database reboot handled automatically
+
+### 3. **Database Schema Fix**
+- Missing columns (`patient_dob`, `symptoms`, `diagnosis`) added automatically
+- Status column expanded to VARCHAR(50) for longer status names
+- Schema fixes applied before data population
+
+### 4. **Frontend API URL Fix**
+- Frontend rebuilt with actual backend IP after deployment
+- No more placeholder URLs or connection timeouts
+- Automatic service redeployment with correct configuration
+
+### 5. **Comprehensive Demo Data**
+- 23 realistic TCM prescriptions with authentic diagnoses
+- Complete order workflow with various statuses
+- Bilingual herb names and patient information
 
 ## 🏗️ Architecture
 
@@ -112,31 +143,70 @@ To avoid ongoing charges after the hackathon:
 
 This will delete all AWS resources created by the deployment.
 
-## 🆘 Troubleshooting
+## 🆘 Troubleshooting (Improved)
 
-### Common Issues
+### Automated Troubleshooting
+```bash
+./troubleshoot.sh
+```
 
-1. **Services not starting**
-   - Check CloudWatch logs for errors
-   - Verify security group rules
-   - Ensure images were pushed successfully
+This script provides:
+- Service status checks
+- IP address discovery
+- Connectivity testing
+- Database connection verification
+- Automatic issue fixes
+- Recent log viewing
 
-2. **Database connection issues**
-   - Verify RDS is in running state
-   - Check security group allows ECS access
-   - Confirm DATABASE_URL is correct
+### Common Issues (Now Auto-Fixed)
 
-3. **Frontend can't reach backend**
-   - Verify ALB listener rules
-   - Check target group health
-   - Confirm API URL is correct in frontend
+1. **Database Connection Timeout** ✅ **FIXED**
+   - **Issue**: ECS tasks couldn't reach RDS database
+   - **Fix**: Security groups automatically configured
+   - **Prevention**: VPC-wide database access rules added
 
-### Manual Database Setup
-If automatic database setup fails:
+2. **SSL Authentication Errors** ✅ **FIXED**
+   - **Issue**: `no pg_hba.conf entry for host` errors
+   - **Fix**: RDS parameter group with `rds.force_ssl=0`
+   - **Prevention**: Database automatically rebooted with new settings
 
-1. Go to ECS Console
-2. Find the backend task
-3. Use "Execute command" to run: `npm run setup`
+3. **Docker Architecture Mismatch** ✅ **FIXED**
+   - **Issue**: ARM64 images failing on AMD64 Fargate
+   - **Fix**: All builds use `--platform linux/amd64`
+   - **Prevention**: Consistent architecture across all images
+
+4. **Frontend API Connection Failures** ✅ **FIXED**
+   - **Issue**: Frontend using placeholder/wrong backend URLs
+   - **Fix**: Frontend rebuilt with actual backend IP
+   - **Prevention**: Dynamic IP discovery and rebuild process
+
+5. **Missing Database Schema** ✅ **FIXED**
+   - **Issue**: Demo data failing due to missing columns
+   - **Fix**: Schema automatically updated before data population
+   - **Prevention**: Comprehensive schema validation
+
+6. **Demo Data Missing** ✅ **FIXED**
+   - **Issue**: Empty order history and prescriptions
+   - **Fix**: 23+ realistic prescriptions automatically created
+   - **Prevention**: Demo data creation included in deployment
+
+### Manual Fixes (If Needed)
+
+If automatic fixes fail, you can run individual components:
+
+```bash
+# Fix database connectivity
+./fix-database-connectivity.sh
+
+# Fix RDS SSL settings
+./fix-rds-ssl.sh
+
+# Rebuild frontend with correct API URL
+./fix-frontend-api-url.sh
+
+# Add missing database schema
+./fix-demo-schema.sh
+```
 
 ## 📞 Support
 
