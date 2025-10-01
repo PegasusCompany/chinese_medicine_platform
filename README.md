@@ -143,20 +143,15 @@ Supplier: supplier@test.com / password123
 
 ## 🔮 **Future Roadmap**
 
-### **Phase 1: Hong Kong Launch** (Current)
+### Current
 - ✅ Core platform functionality
 - ✅ Herb database and supplier network
 - ✅ Regulatory compliance features
 
-### **Phase 2: AI Enhancement** (Q1 2025)
-- 🔄 Machine learning prescription recommendations
-- 🔄 Predictive inventory management
-- 🔄 Automated quality scoring
-
-### **Phase 3: Regional Expansion** (Q2 2025)
-- 🔄 Singapore and Malaysia markets
-- 🔄 Multi-currency support
-- 🔄 Localized herb databases
+### Next
+- 🔄 Account Type "Admin" for 1) verification and approval of practitioner, 2) onboarding of supplier, 3) maintenance of practitioners and suppliers, 4) billing, analytics.
+- 🔄 Notification (i.e. email, SMS) for the status update on a prescription till delivered to end-customer (i.e. patient)
+- 🔄 API with courier service provider (depending on sales volume)
 
 ## 📈 **Impact Metrics**
 
@@ -193,7 +188,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Project Name**: Herb Supply Revolution for Chinese Medicine Practitioners  
 **Category**: Freestyle  
-**Team**: PegasusCompany  
+**Team**: Pegasus (Solo Contribution)
 
 **Innovation**: Democratizing Traditional Chinese Medicine through AI-powered supply chain revolution, enabling independent Chinese Medicine practitioners to compete with large medical groups while providing better patient care. This is a game-changing herb sourcing for solo Traditional Chinese Medicine practitioners, eliminating inventory barriers (i.e. herb procurement and maintenance), reducing startup costs, and connecting them to quality suppliers instantly. 
 
